@@ -4,13 +4,13 @@ A docker image with wordpress(mysql, apache2, php7) controlled by supervisor.
 # Run
 
 ```bash
-docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" -v /var/opt/wordpress:/var/www/localhost/htdocs seancheung/dockerpress:latest
+docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" -v /var/opt/wordpress:/var/www/localhost/htdocs seancheung/dockerpress:alpine
 ```
 
 If not volume mounted and `WP_SKIP_DOWNLOAD` is not set, the latest wordpress will be automatically downloaded during startup
 
 ```bash
-docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" seancheung/dockerpress:latest
+docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" seancheung/dockerpress:alpine
 ```
 
 ## Environments

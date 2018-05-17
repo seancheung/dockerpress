@@ -102,5 +102,6 @@ EOF
 fi
 
 chown -R apache:apache /var/www/localhost/htdocs
+chown -R mysql:mysql /var/opt/mysql
 
 exec "$@"
