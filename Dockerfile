@@ -1,8 +1,8 @@
 FROM ubuntu:16.04
 LABEL maintainer="Sean Cheung <theoxuanx@gmail.com>"
 
-# RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
-# COPY sources.list /etc/apt/sources.list
+ARG CN_MIRROR=false
+RUN if [ "$CN_MIRROR" = true ]; then sed -i 's#http://\(archive\|security\).ubuntu.com/#http://mirrors.aliyun.com/#' /etc/apt/sources.list; fi
 
 RUN set -ex \
     && apt-get update \
@@ -30,10 +30,9 @@ RUN set -ex \
     && rm -rf /var/lib/apt/lists/*
 
 COPY supervisord.conf /etc/supervisor/
-COPY supervisor /etc/supervisor/conf.d/
 COPY entrypoint.sh /entrypoint.sh
 
-VOLUME ["/var/opt/mysql", "/etc/supervisor/conf.d"]
+VOLUME ["/var/opt/mysql"]
 EXPOSE 3306 80
 
 ENTRYPOINT ["/entrypoint.sh"]
