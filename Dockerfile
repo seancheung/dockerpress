@@ -1,8 +1,8 @@
-FROM alpine:3.6
+FROM alpine:3.9
 LABEL maintainer="Sean Cheung <theoxuanx@gmail.com>"
 
-# RUN mv /etc/apk/repositories /etc/apk/repositories.bak
-# COPY repositories /etc/apk/repositories
+ARG CN_MIRROR=false
+RUN if [ "$CN_MIRROR" = true ]; then sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories; fi
 
 RUN set -ex \
     && echo "Install Dependencies..." \
@@ -23,11 +23,9 @@ RUN set -ex \
     && rm /var/www/localhost/htdocs/*
 
 COPY supervisord.conf /etc/
-COPY supervisor /etc/supervisor/conf.d/
 COPY entrypoint.sh /entrypoint.sh
 
-VOLUME ["/etc/supervisor/conf.d"]
-EXPOSE 3306 80
+EXPOSE 80
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

@@ -1,29 +1,72 @@
 # dockerpress
-A docker image with wordpress(apache2, php7) controlled by supervisor.
+
+A docker image with wordpress(mysql, apache2, php7) controlled by supervisor.
 
 # Run
 
 ```bash
-docker run -d --name wordpress -p 80:80 -v /var/opt/wordpress:/var/www/localhost/htdocs seancheung/dockerpress:latest
+docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" -v /var/opt/wordpress:/var/www/html seancheung/dockerpress:latest
 ```
 
-If not volume mounted and `WP_SKIP_DOWNLOAD` is not set, the latest wordpress will be automatically downloaded during startup
+If `WP_SKIP_DOWNLOAD` is not set, the latest wordpress will be automatically downloaded during startup
 
 ```bash
-docker run -d --name wordpress -p 80:80 seancheung/dockerpress:latest
+docker run -d --name wordpress -p 80:80 -e "MYSQL_DATABASE=wordpress" seancheung/dockerpress:latest
 ```
 
-Connect with mysql in another container
+## Tags
 
-```bash
-docker network create wp
-docker network connect wp wordpress
-docker network connect wp mysql_container
-```
+|  tag   | description                           |
+| ------ | ------------------------------------- |
+| latest | ubuntu + mysql(mariadb) + apache2 + php7 |
+| ubuntu | ubuntu + mysql(mariadb) + apache2 + php7 |
+| alpine | alpine + mysql(mariadb) + apache2 + php7 |
+| slim   | alpine + apache2 + php7 |
 
-Use `dockerhost` for mysql hostname when mysql runs on docker host. Otherwise use mysql container name(in the same network) instead.
+## Ports
+
+| port | description       |
+| ---- | ----------------- |
+| 3306 | mysql server      |
+| 80 | wordpress server |
 
 ## Environments
+
+**MYSQL_ROOT_PASSWORD**
+
+Set mysql root password
+
+**MYSQL_USER**
+
+Create one or more user(s). Password will be the same as username if omitted. For multiple user creation, seperate them with ";".
+
+```bash
+MYSQL_USER=username:password
+MYSQL_USER=username
+MYSQL_USER=user1:pass1;user2:pass2
+MYSQL_USER=user1;user2
+MYSQL_USER=user1:pass1:user2;user3
+```
+
+**MYSQL_DATABASE**
+
+Create one or more database(s). Username will be the same as database if omitted. User will be created(with password the same as username) if not exist. For multiple database creation, seperate them with ";".
+
+```bash
+MYSQL_DATABASE=username@database
+MYSQL_DATABASE=database
+MYSQL_DATABASE=username@database1;username@database2
+MYSQL_DATABASE=database1;database2
+MYSQL_DATABASE=user1@database1;user2@database2;database3
+```
+
+**MYSQL_SKIP_INIT**
+
+Skip database initialization
+
+```bash
+MYSQL_SKIP_INIT=true
+```
 
 **WP_SKIP_DOWNLOAD**
 
