@@ -1,8 +1,8 @@
-FROM alpine:3.6
+FROM alpine:3.9
 LABEL maintainer="Sean Cheung <theoxuanx@gmail.com>"
 
-# RUN mv /etc/apk/repositories /etc/apk/repositories.bak
-# COPY repositories /etc/apk/repositories
+ARG CN_MIRROR=false
+RUN if [ "$CN_MIRROR" = true ]; then sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories; fi
 
 RUN set -ex \
     && echo "Install Dependencies..." \
@@ -10,7 +10,7 @@ RUN set -ex \
         php7-curl php7-gd php7-mbstring php7-xml php7-xmlrpc php7-zlib php7-dom \
         php7-posix php7-iconv php7-ftp php7-gettext php7-exif \
         php7-json php7-sockets php7-tokenizer php7-fileinfo php7-session \
-        bash curl ca-certificates openssl supervisor su-exec apache2 \
+        bash curl ca-certificates openssl supervisor apache2 \
 	&& echo "Initializing directories..." \
     && for path in \
 		/var/run/mysqld \
@@ -31,10 +31,9 @@ RUN set -ex \
     && rm /var/www/localhost/htdocs/*
 
 COPY supervisord.conf /etc/
-COPY supervisor /etc/supervisor/conf.d/
 COPY entrypoint.sh /entrypoint.sh
 
-VOLUME ["/var/opt/mysql", "/etc/supervisor/conf.d"]
+VOLUME ["/var/opt/mysql"]
 EXPOSE 3306 80
 
 ENTRYPOINT ["/entrypoint.sh"]
